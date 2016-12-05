@@ -18,12 +18,12 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 ## Loading and preprocessing the data
 
 ```r
-setwd("D:/nirmala/Coursera-Data Science/Reproducible Research/data")
+setwd("c:/temp")
 getwd()
 ```
 
 ```
-## [1] "D:/nirmala/Coursera-Data Science/Reproducible Research/data"
+## [1] "c:/temp"
 ```
 
 ```r
