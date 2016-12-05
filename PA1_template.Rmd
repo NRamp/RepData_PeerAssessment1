@@ -29,17 +29,78 @@ colClasses = c("numeric", "character","integer"))
 summary(activity)
 ```
 
-
 ## What is mean total number of steps taken per day?
 
-
-
+```{r}
+mean(total.steps, na.rm = TRUE)
+median(total.steps, na.rm = TRUE)
+```
 ## What is the average daily activity pattern?
+```{r}
+library(ggplot2)
+averages <- aggregate(x = list(steps = activity$steps), by = list(interval = activity$interval),
+                      FUN = mean, na.rm = TRUE)
+ggplot(data = averages, aes(x = interval, y = steps)) +
+  geom_line() + 
+  xlab("5-minute interval") +
+  ylab("average number of steps taken")
 
-
-
+```
 ## Imputing missing values
+Missing Values introduce bias in computations - Let's see how many missing values are there
+``` {r}
+incomplete <- is.na(activity$steps)
+table(incomplete) 
+```
 
+Let us fill the missing values with a mean value of 5 minute interval
+``` {r}
+fill.value <- function(steps, interval) {
+    filled <- NA
+    if (!is.na(steps))
+        filled <- c(steps)
+    else
+        filled <- (averages[averages$interval==interval, "steps"])
+    return(filled)
+}
+filled.activity <- activity
+filled.activity$steps <- mapply(fill.value, filled.activity$steps, filled.activity$interval)
+```
 
+Now let's create the same histogram with the imputed data
 
+``` {r} 
+total.steps <- tapply(filled.activity$steps, filled.activity$date, FUN = sum)
+qplot(total.steps, binwidth = 1000, xlab = "total number of steps taken each day")
+```
+
+And calcuate the mean and median
+
+```{r}
+mean(total.steps)
+median(total.steps)
+```
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Using the completed data, let's identify the day of the week for the measurements. 
+
+```{r}
+weekday.or.weekend <- function(date) {
+    day <- weekdays(date)
+    if (day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))
+        return("weekday")
+    else if (day %in% c("Saturday", "Sunday"))
+        return("weekend")
+    else
+        stop("invalid date")
+}
+filled.activity$date <- as.Date(filled.activity$date)
+filled.activity$day <- sapply(filled.activity$date, FUN=weekday.or.weekend)
+```
+Now, let’s make a plot containing plots of average number of steps taken on weekdays and weekends.
+
+```{r}
+averages <- aggregate(steps ~ interval + day, data=filled.activity, mean)
+ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(day ~ .) +
+    xlab("5-minute interval") + ylab("Number of steps")
+```
