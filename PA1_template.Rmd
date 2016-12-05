@@ -30,7 +30,12 @@ summary(activity)
 ```
 
 ## What is mean total number of steps taken per day?
-
+```{r}
+library(ggplot2)
+total.steps <- tapply(activity$steps, activity$date, na.rm = TRUE, FUN=sum)
+total.steps
+qplot(total.steps, xlab="Total Number of Steps/day", binwidth=1000)
+```
 ```{r}
 mean(total.steps, na.rm = TRUE)
 median(total.steps, na.rm = TRUE)
