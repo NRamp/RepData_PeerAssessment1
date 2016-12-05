@@ -21,7 +21,13 @@ interval: Identifier for the 5-minute interval in which measurement was taken
 The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
 
 ## Loading and preprocessing the data
-
+```{r}
+setwd("D:/nirmala/Coursera-Data Science/Reproducible Research/data")
+getwd()
+activity <- read.csv("activity.csv",
+colClasses = c("numeric", "character","integer"))
+summary(activity)
+```
 
 
 ## What is mean total number of steps taken per day?
